@@ -42,7 +42,7 @@ class DynamicObjectResource(js: JsObject) {
   private def readTypeInfo(fieldName: String, onMissing: ValidationFailure): ValidationResult[String] = {
     js.fields.find(field => field._1 == fieldName) match {
       case None => Either.left(onMissing)
-      case Some(field) => Either.right(field._2.toString)
+      case Some(field) => Either.right(field._2.as[String])
     }
   }
 
@@ -52,14 +52,15 @@ class DynamicObjectResource(js: JsObject) {
    * Parse the resource, returnning an instance of a concrete ObjectResource class determined by the kind and apiVersion
    */
   private def parseResource(kind: String, version: String): ValidationResult[JsResult[skuber.ObjectResource]] = {
-    (kind,version) match {
+    val typeInfo = Tuple2(kind,version)
+    typeInfo match {
+      case ("Service", "v1") => parseAs[skuber.Service]
       case ("Deployment", "extensions/v1beta1") => parseAs[ExtDeployment]
       case ("Deployment", "apps/v1beta1") => parseAs[AppsDeployment]
       case ("ReplicaSet", "extensions/v1beta1") => parseAs[ReplicaSet]
       case ("ReplicationController", "v1") => parseAs[skuber.ReplicationController]
       case ("StatefulSet", "apps/v1beta1") => parseAs[StatefulSet]
       case ("Ingress", "extensions/v1beta1") => parseAs[Ingress]
-      case ("Service", "v1") => parseAs[skuber.Service]
       case ("ConfigMap", "v1") => parseAs[skuber.ConfigMap]
       case ("Namespace", "v1") => parseAs[skuber.Namespace]
       case ("Pod", "v1") => parseAs[skuber.Pod]
@@ -72,16 +73,14 @@ class DynamicObjectResource(js: JsObject) {
       case ("ClusterRole", "rbac.authorization.k8s.io/v1beta1") => parseAs[ClusterRole]
       case ("RoleBinding", "rbac.authorization.k8s.io/v1beta1") => parseAs[RoleBinding]
       case ("ClusterRoleBinding", "rbac.authorization.k8s.io/v1beta1") => parseAs[ClusterRoleBinding]
-      case _ => Either.left(UnsupportedType(kind,version))
+      case t => Either.left(UnsupportedType(t._1, t._2))
     }
   }
 
   private def getResource(parseResult: ValidationResult[JsResult[skuber.ObjectResource]]): ValidatedResource = {
-    parseResult.flatMap { result =>
-      result match {
+    parseResult.flatMap {
         case JsError(err) => Either.left(ParseError(err.toString))
         case JsSuccess(resource, _) => Either.right(resource)
-      }
     }
   }
 

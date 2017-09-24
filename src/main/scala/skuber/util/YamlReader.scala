@@ -33,8 +33,10 @@ object YamlReader {
     val yaml = new Yaml(new SafeConstructor)
     val yamlDocs = yaml.loadAll(is).iterator.asScala
     yamlDocs.map { yamlDoc =>
-      val jsonString = yamlStringToJsonString(yamlDoc.toString)
-      Json.parse(jsonString).as[JsObject]
+      val yaml=new Yaml
+      val outputYamlStr = yaml.dump(yamlDoc)
+      val json = yamlStringToJsonString(outputYamlStr)
+      Json.parse(json).as[JsObject]
     }.toSeq
   }
 }

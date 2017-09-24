@@ -2,6 +2,8 @@ val skuber = "io.github.doriordan" %% "skuber" % "1.7.1-RC2"
 val jacksonYaml = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.9.1"
 val snakeYaml = "org.yaml" % "snakeyaml" % "1.18"
 val cats = "org.typelevel" %% "cats-core" % "1.0.0-MF"
+val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.12.4"
+val specs2 = "org.specs2" %% "specs2-core" % "3.7"
 
 // These versions are required by skuber
 scalacOptions += "-target:jvm-1.8"
@@ -44,7 +46,7 @@ lazy val commonSettings = Seq(
 
 lazy val skuberUtilSettings = Seq(
   name := "skuber-util",
-  libraryDependencies ++= Seq(skuber,jacksonYaml, snakeYaml, cats).
+  libraryDependencies ++= Seq(skuber,jacksonYaml, snakeYaml, cats, scalaCheck % Test,specs2 % Test).
 				map(_.exclude("commons-logging","commons-logging"))
 )
 
