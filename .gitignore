@@ -1,0 +1,11 @@
+.project
+.classpath
+target/
+.DS_Store
+.settings/
+.cache-main
+.worksheet/
+.idea/
+*.sc
+*.launch
+bin/
