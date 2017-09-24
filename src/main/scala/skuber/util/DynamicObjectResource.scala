@@ -40,7 +40,7 @@ class DynamicObjectResource(js: JsObject) {
   // private API
 
   private def readTypeInfo(fieldName: String, onMissing: ValidationFailure): ValidationResult[String] = {
-    js.fields.find(field => field._1 == "kind") match {
+    js.fields.find(field => field._1 == fieldName) match {
       case None => Either.left(onMissing)
       case Some(field) => Either.right(field._2.toString)
     }
