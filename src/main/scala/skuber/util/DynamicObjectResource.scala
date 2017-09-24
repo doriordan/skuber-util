@@ -31,7 +31,8 @@ class DynamicObjectResource(js: JsObject) {
   implicit val appsDeplFormat=skuber.json.apps.format.depFormat
 
   // Public API to retrieve the validated details of the type
-  // The return type for each is a cats Either, so right biased. If set to left, it contains a validation failure.
+  // The return type for each is a Either. If set to left it contains a validation failure, if set to right it
+  // contains a valid rsul
 
   lazy val kind: ValidationResult[String] = readTypeInfo("kind", NoKindSpecified)
   lazy val apiVersion: ValidationResult[String] = readTypeInfo("apiVersion", NoAPIVersionSpecified)
