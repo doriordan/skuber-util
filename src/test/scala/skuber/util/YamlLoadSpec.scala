@@ -18,12 +18,12 @@ class YamlLoadSpec extends Specification {
 
     validatedResources.isRight mustEqual true
     val resources = validatedResources.right.get.toList
-    resources.size mustEqual 6
+    resources must haveSize(6)
     val services = resources collect { case svc: skuber.Service => svc }
     val deployments = resources collect { case depl: skuber.ext.Deployment => depl }
-    services.size mustEqual 3
-    deployments.size mustEqual 3
-    services exists { svc => svc.name == "redis-master"} mustEqual true
-    deployments exists { depl => depl.name == "redis-master"} mustEqual true
+    services must haveSize(3)
+    deployments must haveSize(3)
+    services exists { svc => svc.name == "redis-master"} must beTrue
+    deployments exists { depl => depl.name == "redis-master"} must beTrue
   }
 }
